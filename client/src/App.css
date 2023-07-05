@@ -43,6 +43,10 @@
   padding: 20px;
 }
 
+li {
+    list-style-type: none;
+}
+
 h1 {
   text-align: center;
 }
@@ -88,8 +92,11 @@ button {
   padding: 10px;
   overflow-y: auto;
 }
-
+.currency-rates li, .weather p {
+    font-size: 20px;
+}
 .sidebar {
   display: flex;
   flex-direction: column;
 }
+
