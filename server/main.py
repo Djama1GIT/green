@@ -5,7 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 app = FastAPI(
-    title='News'
+    title='News',
+    version='0.11'
 )
 app.add_middleware(
     CORSMiddleware,
