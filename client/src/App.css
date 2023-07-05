@@ -68,3 +68,28 @@ button {
   margin-top: 10px;
 }
 
+.currency-rates {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  background-color: #fff;
+  padding: 10px;
+  overflow-y: auto;
+}
+.weather {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 200px;
+  background-color: #fff;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}

@@ -5,6 +5,8 @@ import './App.css';
 function App() {
   const [news, setNews] = useState([]);
   const [selectedNews, setSelectedNews] = useState(null);
+  const [currencyRates, setCurrencyRates] = useState({});
+  const [weather, setWeather] = useState({});
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -16,6 +18,36 @@ function App() {
       fetchNews();
     }
   }, [news.length]);
+
+  useEffect(() => {
+    const fetchCurrencyRates = async () => {
+      const response = await axios.get('http://127.0.0.1:8000/currency_rates');
+      setCurrencyRates(response.data);
+    };
+
+    fetchCurrencyRates();
+
+    const interval = setInterval(() => {
+      fetchCurrencyRates();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      const response = await axios.get('http://127.0.0.1:8000/weather');
+      setWeather(response.data);
+    };
+
+    fetchWeather();
+
+    const interval = setInterval(() => {
+      fetchWeather();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleNewsClick = async (newsId) => {
     const response = await axios.get(`http://localhost:8000/news/${newsId}`);
@@ -46,6 +78,22 @@ function App() {
           <button onClick={handleBackClick}>Back</button>
         </div>
       )}
+      <div className="sidebar">
+        <div className="currency-rates">
+          <h2>Currency Rates</h2>
+          <ul>
+            {Object.entries(currencyRates).map(([currency, rate]) => (
+              <li key={currency}>
+                {currency} {rate.toFixed(2)}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="weather">
+          <h3>Weather in {weather.city}</h3>
+          <p>{weather.weather} - {weather.celsius}°C</p>
+        </div>
+      </div>
     </div>
   );
 }
