@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, List
+from typing import Tuple, List
 
 from fastapi import FastAPI, Request, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from auth.auth import auth_backend
 from auth.manager import get_user_manager
-from db import User
+from auth.models import User
 from auth.schemas import UserRead, UserCreate
 
 fastapi_users = FastAPIUsers[User, int](
