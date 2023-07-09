@@ -1,16 +1,19 @@
-from typing import Tuple, List
-
-from fastapi import FastAPI, Request, status, Depends
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi_users import FastAPIUsers
-from pydantic import BaseModel, Field, ValidationError
+
+from pydantic import ValidationError
 
 from auth.auth import auth_backend
 from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
+
+from news.router import router as news_router
+# from admin.router import router as admin_router
+from utils.router import router as utils_router
 
 fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
@@ -29,7 +32,7 @@ app.add_middleware(
 )
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth/redis",
+    prefix="/auth",
     tags=["auth"],
 )
 app.include_router(
@@ -37,36 +40,9 @@ app.include_router(
     prefix="/auth",
     tags=["auth"],
 )
-news = [
-    {
-        'id': 1,
-        'title': '1. Lorem Ipsum',
-        'description': 'Lorem Ipsum dolor sit amet',
-        'content': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-        'views': 234
-    },
-    {
-        'id': 2,
-        'title': '2. Lorem Ipsum',
-        'description': 'Lorem Ipsum dolor sit amet',
-        'content': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-        'views': 2342
-    },
-    {
-        'id': 3,
-        'title': '3. Lorem Ipsum',
-        'description': 'Lorem Ipsum dolor sit amet',
-        'content': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-        'views': 234
-    },
-    {
-        'id': 4,
-        'title': '4. Lorem Ipsum',
-        'description': 'Lorem Ipsum dolor sit amet',
-        'content': 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-        'views': 234
-    }
-]
+app.include_router(news_router)
+# app.include_router(admin_router)
+app.include_router(utils_router)
 
 
 @app.exception_handler(ValidationError)
@@ -77,78 +53,3 @@ async def validation_exception_error(request: Request, exc: ValidationError):
     )
 
 
-class NewsItem(BaseModel):
-    id: int = Field(ge=0)
-    title: str
-    description: str
-    content: str
-    views: int
-
-
-class News(BaseModel):
-    news: List[NewsItem]
-
-
-@app.get("/", response_model=News)
-async def root():
-    return {'news': news}
-
-
-@app.get('/news/{news_id}')
-async def news_detail(news_id: int):
-    """
-    нужно менять эту ф-ю, искать айдишник по индексу так себе, ведь некоторые могут отсутствовать
-    сделать валидацию
-    :param news_id:
-    :return:
-    """
-    return {'status': 200, 'news': news[news_id - 1]}
-
-
-class Currency(BaseModel):
-    dollar: Tuple[str, float]
-    euro: Tuple[str, float]
-    FYM: Tuple[str, float]
-
-
-@app.get('/currency_rates', response_model=Currency)
-async def currency():
-    return Currency(
-        dollar=('$', 80.0),
-        euro=('€', 99.85),
-        FYM=('¥', 12.0)
-    )
-
-
-class Weather(BaseModel):
-    city: str = Field(max_length=20)
-    celsius: float
-    weather: str = Field(max_length=20)
-
-
-@app.get('/weather', response_model=Weather)
-async def _weather():
-    return Weather(
-        city='Moscow',
-        celsius=24.5,
-        weather='Clear',
-    )
-
-
-class NewsId(BaseModel):
-    news_id: int = Field(ge=0)
-
-
-@app.post('/statistics')
-async def statistics(news_id: NewsId):
-    return {'status': 200,
-            'id': news_id.news_id,
-            'views': news[news_id.news_id - 1]['views']}
-
-
-current_superuser = fastapi_users.current_user(active=True, superuser=True)
-
-
-@app.get("/protected-route")
-def protected_route(user: User = Depends(current_superuser)):
-    return f"Hello, {user.email}"

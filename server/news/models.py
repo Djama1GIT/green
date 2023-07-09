@@ -17,7 +17,6 @@ class News(Base):
     def json(self):
         return {
             'id': self.id,
-            'author_id': self.author_id,
             'title': self.title,
             'description': self.description,
             'content': self.content,

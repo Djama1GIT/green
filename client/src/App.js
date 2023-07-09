@@ -10,7 +10,7 @@ function App() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('http://localhost:8000/');
+        const response = await fetch('http://localhost:8000/news');
         const data = await response.json();
         setNews(data.news);
       } catch (error) {
