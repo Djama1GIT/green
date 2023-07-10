@@ -12,7 +12,7 @@ function App() {
       try {
         const response = await fetch('http://localhost:8000/news');
         const data = await response.json();
-        setNews(data.news);
+        setNews(data);
       } catch (error) {
         console.error(error);
       }
@@ -65,7 +65,7 @@ function App() {
     try {
       const response = await fetch(`http://localhost:8000/news/${newsId}`);
       const data = await response.json();
-      setSelectedNews(data.news);
+      setSelectedNews(data);
     } catch (error) {
       console.error(error);
     }
@@ -98,17 +98,30 @@ function App() {
       <div className="sidebar">
         <div className="currency-rates">
           <h2>Currency Rates</h2>
-          <ul>
-            {Object.entries(currencyRates).map(([currencyCode, currencyData]) => (
-              <li key={currencyCode}>
-                {currencyData[0]}: {currencyData[1].toFixed(2)}
-              </li>
-            ))}
-          </ul>
+          {currencyRates.detail ? (
+            <p>No currency rates available</p>
+          ) : (
+            <ul>
+              {Object.entries(currencyRates).map(([currencyCode, currencyData]) => (
+                <li key={currencyCode}>
+                  {currencyData[0]}: {currencyData[1].toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="weather">
-          <h3>Weather in {weather.city}</h3>
-          <p>{weather.weather} - {weather.celsius}°C</p>
+            {weather.detail ? (
+                <div>
+                  <h3>Weather</h3>
+                  <p>No weather available</p>
+                </div>
+              ) : (
+                <div>
+                  <h3>Weather in {weather.city}</h3>
+                  <p>{weather.weather} - {weather.celsius}°C</p>
+                </div>
+              )}
         </div>
       </div>
     </div>
