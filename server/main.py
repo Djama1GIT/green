@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi_users import FastAPIUsers
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 
 from pydantic import ValidationError
 
@@ -15,10 +17,6 @@ from news.router import router as news_router
 from admin.router import router as admin_router
 from utils.router import router as utils_router
 
-
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-
 from redis import asyncio as aioredis
 
 fastapi_users = FastAPIUsers[User, int](
@@ -28,7 +26,7 @@ fastapi_users = FastAPIUsers[User, int](
 
 app = FastAPI(
     title='News',
-    version='0.11'
+    version='0.23'
 )
 app.add_middleware(
     CORSMiddleware,
@@ -41,12 +39,12 @@ app.include_router(
     prefix="/auth",
     tags=["auth"],
 )
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-    dependencies=[Depends(fastapi_users.current_user(active=True, superuser=True))]
-)
+# app.include_router(
+#     fastapi_users.get_register_router(UserRead, UserCreate),
+#     prefix="/auth",
+#     tags=["auth"],
+#     dependencies=[Depends(fastapi_users.current_user(active=True, superuser=True))]
+# )
 # Only superuser can register users (news editors)
 
 app.include_router(news_router)

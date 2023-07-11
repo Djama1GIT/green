@@ -4,14 +4,22 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update, desc
 from fastapi_cache.decorator import cache
+from fastapi_users import FastAPIUsers
 
 from .chemas import NewsItem, NewsItemForInsert, NewsItemForPut
 from db import get_async_session
 from news.models import News
+from auth.models import User
+from auth.auth import auth_backend
+from auth.manager import get_user_manager
 
 router = APIRouter(
     prefix='/news',
     tags=['News']
+)
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    [auth_backend],
 )
 
 
@@ -33,7 +41,8 @@ async def news_details(news_id: int, session: AsyncSession = Depends(get_async_s
 
 
 @router.post("/add_news")
-async def add_news(news_item: NewsItemForInsert, session: AsyncSession = Depends(get_async_session)):
+async def add_news(news_item: NewsItemForInsert, session: AsyncSession = Depends(get_async_session),
+                   user: User = Depends(fastapi_users.current_user(active=True))):
     statement = insert(News).values(**news_item.dict())
     try:
         await session.execute(statement)
@@ -45,7 +54,8 @@ async def add_news(news_item: NewsItemForInsert, session: AsyncSession = Depends
 
 
 @router.put("/edit_news")
-async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(get_async_session)):
+async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(get_async_session),
+                    user: User = Depends(fastapi_users.current_user(active=True))):
     statement = update(News).where(News.id == news_item.id).values(**news_item.dict())
     try:
         await session.execute(statement)
@@ -57,7 +67,8 @@ async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(g
 
 
 @router.delete("/delete_news")
-async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_session)):
+async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_session),
+                      user: User = Depends(fastapi_users.current_user(active=True))):
     statement = delete(News).where(News.id == news_id)
     try:
         await session.execute(statement)

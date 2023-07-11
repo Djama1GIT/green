@@ -1,18 +1,24 @@
 from pydantic import BaseSettings
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
     class Config:
         env_file = '.env'
 
-    POSTGRES_DB: str = 'green'
-    POSTGRES_USER: str = 'postgres'
-    POSTGRES_PASSWORD: str = '93757'
-    POSTGRES_HOST: str = '127.0.0.1'
-    POSTGRES_PORT: str = 5432
-    QUESTIONS_URL: str = ''
+    NAME: str = os.getenv("NAME")
 
-    AUTH_MANAGER_SECRET: str = 'pLLefnee45weI7W78RUQI4QRW8wfriF95HIRW414UwqiuF34'
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB")
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
+    POSTGRES_HOST: str = os.getenv("POSTGRES_HOST")
+    POSTGRES_PORT: int = os.getenv("POSTGRES_PORT")
+    QUESTIONS_URL: str = os.getenv("QUESTIONS_URL")
+
+    AUTH_MANAGER_SECRET: str = os.getenv("AUTH_MANAGER_SECRET")
 
 
 settings = Settings()
