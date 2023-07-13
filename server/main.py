@@ -39,13 +39,13 @@ app.include_router(
     prefix="/auth",
     tags=["auth"],
 )
-# app.include_router(
-#     fastapi_users.get_register_router(UserRead, UserCreate),
-#     prefix="/auth",
-#     tags=["auth"],
-#     dependencies=[Depends(fastapi_users.current_user(active=True, superuser=True))]
-# )
-# Only superuser can register users (news editors)
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+    # dependencies=[Depends(fastapi_users.current_user(active=True, superuser=True))]
+)
+
 
 app.include_router(news_router)
 app.include_router(admin_router,
