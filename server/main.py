@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from auth.auth import auth_backend
 from auth.manager import get_user_manager
 from auth.models import User
-from auth.schemas import UserRead, UserCreate
+# from auth.schemas import UserRead, UserCreate
 
 from news.router import router as news_router
 from admin.router import router as admin_router
@@ -26,7 +26,7 @@ fastapi_users = FastAPIUsers[User, int](
 
 app = FastAPI(
     title='News',
-    version='0.23'
+    version='0.25'
 )
 app.add_middleware(
     CORSMiddleware,
@@ -39,12 +39,12 @@ app.include_router(
     prefix="/auth",
     tags=["auth"],
 )
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-    # dependencies=[Depends(fastapi_users.current_user(active=True, superuser=True))]
-)
+# app.include_router(
+#     fastapi_users.get_register_router(UserRead, UserCreate),
+#     prefix="/auth",
+#     tags=["auth"],
+#     dependencies=[Depends(fastapi_users.current_user(active=True, superuser=True))]
+# )
 
 
 app.include_router(news_router)

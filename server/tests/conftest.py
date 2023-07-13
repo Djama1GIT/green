@@ -1,12 +1,21 @@
 import asyncio
 from typing import AsyncGenerator
 
+import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
+
+from fastapi_users import FastAPIUsers
+
+from auth.auth import auth_backend
+from auth.manager import get_user_manager
+from auth.models import User
+from auth.schemas import UserRead, UserCreate
+
 import sys
 import os
 
@@ -22,6 +31,17 @@ URL_TEST_DATABASE = f"postgresql+asyncpg://{settings.POSTGRES_USER_TEST}:{settin
 engine_test = create_async_engine(URL_TEST_DATABASE, poolclass=NullPool)
 async_session_maker = sessionmaker(engine_test, class_=AsyncSession, expire_on_commit=False)
 metadata.bind = engine_test
+
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    [auth_backend],
+)
+
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"]
+)
 
 
 async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
@@ -41,7 +61,7 @@ async def prepare_database():
         await conn.run_sync(metadata.drop_all)
 
 
-@pytest_asyncio.fixture(scope='session')
+@pytest.fixture(scope='session')
 def event_loop(request):
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop

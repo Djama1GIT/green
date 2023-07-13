@@ -1,4 +1,9 @@
 from typing import AsyncGenerator
+import sys
+import os
+
+server_path = os.path.join(os.getcwd(), "")
+sys.path.insert(0, server_path)
 
 from config import DATABASE_URL
 from sqlalchemy.orm import declarative_base
