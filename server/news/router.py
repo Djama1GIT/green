@@ -41,29 +41,34 @@ async def news_details(news_id: int, session: AsyncSession = Depends(get_async_s
 
 
 @router.post("/add_news")
-async def add_news(news_item: NewsItemForInsert, session: AsyncSession = Depends(get_async_session),
+async def add_news(news_item: NewsItemForInsert,
+                   session: AsyncSession = Depends(get_async_session),
                    user: User = Depends(fastapi_users.current_user(active=True))):
     statement = insert(News).values(**news_item.dict())
     try:
         await session.execute(statement)
         await session.commit()
+        return {"status": 200}
     except:
         await session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add news")
-    return {"status": 200}
 
 
 @router.put("/edit_news")
 async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(get_async_session),
                     user: User = Depends(fastapi_users.current_user(active=True))):
+    result = await session.execute(select(News).where(News.id == news_item.id))
+    news = result.scalars().first()
+    if not news:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"News not found ({news_item.id})")
     statement = update(News).where(News.id == news_item.id).values(**news_item.dict())
     try:
         await session.execute(statement)
         await session.commit()
+        return {"status": 200}
     except:
         await session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to edit news")
-    return {"status": 200}
 
 
 @router.delete("/delete_news")
@@ -73,7 +78,8 @@ async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_se
     try:
         await session.execute(statement)
         await session.commit()
+        return {"status": 200}
     except:
         await session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to delete news")
-    return {"status": 200}
+

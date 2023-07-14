@@ -69,6 +69,7 @@ def event_loop(request):
 
 
 client = TestClient(app)
+async_client = AsyncClient(app=app, base_url='http://test')
 
 
 @pytest_asyncio.fixture(scope='session')
