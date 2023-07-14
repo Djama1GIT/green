@@ -16,6 +16,10 @@ from auth.manager import get_user_manager
 from auth.models import User
 from auth.schemas import UserRead, UserCreate
 
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
+
 import sys
 import os
 
@@ -51,6 +55,8 @@ async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 app.dependency_overrides[get_async_session] = override_get_async_session
 
+redis = aioredis.from_url("redis://localhost:6379/2")
+FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
 @pytest_asyncio.fixture(autouse=True, scope='session')
 async def prepare_database():

@@ -82,3 +82,20 @@ async def test_delete(ac, news_id, code):
     response = await ac.delete("/news/delete_news", params=f"news_id={news_id}", cookies=cookies)
     print(response.text)
     assert response.status_code == code
+
+
+@pytest.mark.parametrize("news_id, code", [
+    (404, 404),
+    (None, 422),
+    (1001, 200),
+])
+@pytest.mark.asyncio
+async def test_details(ac, news_id, code):
+    response = await ac.get(f"/news/{news_id}")
+    assert response.status_code == code
+
+
+@pytest.mark.asyncio
+async def test_all_news(ac):
+    response = await ac.get("/news/")
+    assert response.status_code == 200
