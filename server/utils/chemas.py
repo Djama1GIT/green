@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class Currency(BaseModel):
-    dollar: Tuple[str, float]
-    euro: Tuple[str, float]
-    FYM: Tuple[str, float]
+    dollar: Tuple[str, float, int]
+    euro: Tuple[str, float, int]
+    FYM: Tuple[str, float, int]
 
 
 class Weather(BaseModel):

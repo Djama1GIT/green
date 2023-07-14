@@ -22,23 +22,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const fetchCurrencyRates = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/currency_rates');
-        const data = await response.json();
-        setCurrencyRates(data);
-      } catch (error) {
-        console.error(error);
-      }
+    const currencySocket = new WebSocket('ws://localhost:8000/currency_rates');
+
+    currencySocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setCurrencyRates(data);
     };
 
-    fetchCurrencyRates();
+    currencySocket.onerror = (error) => {
+      console.error(`WebSocket error: ${error}`);
+    };
 
-    const interval = setInterval(() => {
-      fetchCurrencyRates();
-    }, 60000);
-
-    return () => clearInterval(interval);
+    return () => {
+      currencySocket.close();
+    };
   }, []);
 
   useEffect(() => {
@@ -103,9 +100,9 @@ function App() {
           ) : (
             <ul>
               {Object.entries(currencyRates).map(([currencyCode, currencyData]) => (
-                <li key={currencyCode}>
-                  {currencyData[0]}: {currencyData[1].toFixed(2)}
-                </li>
+                  <li key={currencyCode}>
+                    {currencyData[0]}: {currencyData[1].toFixed(2)} {currencyData[2] === 0 ? '→' : currencyData[2] === 1 ? '↑' : '↓'}
+                  </li>
               ))}
             </ul>
           )}

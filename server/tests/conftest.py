@@ -58,6 +58,7 @@ app.dependency_overrides[get_async_session] = override_get_async_session
 redis = aioredis.from_url("redis://localhost:6379/2")
 FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
+
 @pytest_asyncio.fixture(autouse=True, scope='session')
 async def prepare_database():
     async with engine_test.begin() as conn:

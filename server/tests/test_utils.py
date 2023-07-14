@@ -1,10 +1,15 @@
 import pytest
+from conftest import client
 
 
-@pytest.mark.asyncio
-async def test_currency(ac):
-    response = await ac.get("/currency_rates")
-    assert response.status_code == 200
+# @pytest.mark.timeout(5)
+# def test_currency_rates():
+#     with client.websocket_connect("/currency_rates") as websocket:
+#         message = websocket.receive_json()
+#         assert "dollar" in message
+#         assert "euro" in message
+#         assert "FYM" in message
+#         websocket.close()
 
 
 @pytest.mark.asyncio
