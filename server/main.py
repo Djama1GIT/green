@@ -18,6 +18,7 @@ from admin.router import router as admin_router
 from utils.router import router as utils_router
 
 from redis import asyncio as aioredis
+from config import settings
 
 fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
@@ -31,7 +32,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
 )
 app.include_router(
@@ -63,5 +64,5 @@ async def validation_exception_error(request: Request, exc: ValidationError):
 
 @app.on_event("startup")
 async def startup():
-    redis = aioredis.from_url("redis://localhost")
+    redis = aioredis.from_url(f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}")
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

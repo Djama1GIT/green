@@ -8,21 +8,22 @@ function App() {
   const [weather, setWeather] = useState({});
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/news');
-        const data = await response.json();
-        setNews(data);
+        const newsResponse = await fetch('http://localhost/news/');
+        const newsData = await newsResponse.json();
+        setNews(newsData);
+        const weatherResponse = await fetch('http://localhost/weather');
+        const weatherData = await weatherResponse.json();
+        setWeather(weatherData);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchNews();
-  }, []);
+    fetchData();
 
-  useEffect(() => {
-    const currencySocket = new WebSocket('ws://localhost:8000/currency_rates');
+    const currencySocket = new WebSocket('ws://localhost/currency_rates');
 
     currencySocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -38,29 +39,9 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/weather');
-        const data = await response.json();
-        setWeather(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchWeather();
-
-    const interval = setInterval(() => {
-      fetchWeather();
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleNewsClick = async (newsId) => {
     try {
-      const response = await fetch(`http://localhost:8000/news/${newsId}`);
+      const response = await fetch(`http://localhost/news/${newsId}`);
       const data = await response.json();
       setSelectedNews(data);
     } catch (error) {
@@ -95,7 +76,7 @@ function App() {
       <div className="sidebar">
         <div className="currency-rates">
           <h2>Currency Rates</h2>
-          {currencyRates.detail ? (
+          {!currencyRates.dollar ? (
             <p>No currency rates available</p>
           ) : (
             <ul>
@@ -108,7 +89,7 @@ function App() {
           )}
         </div>
         <div className="weather">
-            {weather.detail ? (
+            {!weather.city ? (
                 <div>
                   <h3>Weather</h3>
                   <p>No weather available</p>

@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    container_name: green_db
+    env_file:
+      - .env
+    restart: always
+
+  redis:
+    image: redis:7
+    container_name: green_redis
+    restart: always
+    env_file:
+      - .env
+
+  server:
+    build:
+      context: .
+    env_file:
+      - .env
+    container_name: green_server
+    command: sh -c "cd server && alembic upgrade head && python manage.py run --ac --auto"
+    ports:
+      - 80:8000
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  #  client:
+  #    ...
+
+  celery:
+    build:
+      context: .
+    env_file:
+      - .env
+    container_name: green_celery
+    command: sh -c "cd server && celery -A tasks.tasks:celery_app worker --loglevel=INFO --pool=solo"
+    restart: always
+    depends_on:
+      - redis
+
+  flower:
+    build:
+      context: .
+    env_file:
+      - .env
+    container_name: green_flower
+    command: sh -c "cd server && celery -A tasks.tasks:celery_app flower"
+    restart: always
+    depends_on:
+      - redis
+      - celery

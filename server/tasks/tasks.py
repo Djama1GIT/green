@@ -5,7 +5,7 @@ from celery import Celery
 
 from .smtp_config import settings
 
-celery_app = Celery('tasks', broker=f"{settings.BROKER_HOST}:{settings.BROKER_PORT}")
+celery_app = Celery('tasks', broker=f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}")
 
 
 def get_welcome_message(email: str, password: str):

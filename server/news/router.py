@@ -40,10 +40,9 @@ async def news_details(news_id: int, session: AsyncSession = Depends(get_async_s
     return news.json()
 
 
-@router.post("/add_news")
+@router.post("/add_news", dependencies=[Depends(fastapi_users.current_user(active=True))])
 async def add_news(news_item: NewsItemForInsert,
-                   session: AsyncSession = Depends(get_async_session),
-                   user: User = Depends(fastapi_users.current_user(active=True))):
+                   session: AsyncSession = Depends(get_async_session)):
     statement = insert(News).values(**news_item.dict())
     try:
         await session.execute(statement)
@@ -54,9 +53,8 @@ async def add_news(news_item: NewsItemForInsert,
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add news")
 
 
-@router.put("/edit_news")
-async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(get_async_session),
-                    user: User = Depends(fastapi_users.current_user(active=True))):
+@router.put("/edit_news", dependencies=[Depends(fastapi_users.current_user(active=True))])
+async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(select(News).where(News.id == news_item.id))
     news = result.scalars().first()
     if not news:
@@ -71,9 +69,8 @@ async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(g
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to edit news")
 
 
-@router.delete("/delete_news")
-async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_session),
-                      user: User = Depends(fastapi_users.current_user(active=True))):
+@router.delete("/delete_news", dependencies=[Depends(fastapi_users.current_user(active=True))])
+async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_session)):
     statement = delete(News).where(News.id == news_id)
     try:
         await session.execute(statement)
