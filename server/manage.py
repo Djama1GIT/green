@@ -22,14 +22,13 @@ async def create_superuser(method=None, session: AsyncSession = async_session_ma
     else:
         raise Exception(f'Unexpected argument {method}')
 
-
     password_helper = PasswordHelper()
     statement = insert(User).values(UserRegister(
         email=email,
         hashed_password=password_helper.hash(password),
         is_active=True,
-        is_superuser=False,
-        is_verified=False
+        is_superuser=True,
+        is_verified=True
     ).dict())
     try:
         await session.execute(statement)
@@ -38,6 +37,8 @@ async def create_superuser(method=None, session: AsyncSession = async_session_ma
     except:
         await session.rollback()
         raise Exception("[Create SuperUser]: Failed to register superuser")
+    finally:
+        await session.close()
 
 
 async def add_initial_data(session: AsyncSession = async_session_maker()):
@@ -52,6 +53,8 @@ async def add_initial_data(session: AsyncSession = async_session_maker()):
     except:
         await session.rollback()
         raise Exception("[Add initial data]: Failed to add initial data")
+    finally:
+        await session.close()
 
 
 async def main():

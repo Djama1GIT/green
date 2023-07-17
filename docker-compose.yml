@@ -3,9 +3,13 @@ services:
   db:
     image: postgres:15
     container_name: green_db
+    restart: always
+    ports:
+      - 5432:5432
     env_file:
       - .env
-    restart: always
+#    volumes:
+#      - db_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7
@@ -13,43 +17,71 @@ services:
     restart: always
     env_file:
       - .env
+#    volumes:
+#      - redis_data:/app/data
 
   server:
     build:
       context: .
+    container_name: green_server
+#    command: sh -c "cd server && alembic upgrade head && python manage.py run"
+    command: sh -c "cd server && alembic upgrade head && python manage.py run --ac --auto" # don't use it with volumes
+    ports:
+      - 8080:8000
+    restart: always
     env_file:
       - .env
-    container_name: green_server
-    command: sh -c "cd server && alembic upgrade head && python manage.py run --ac --auto"
-    ports:
-      - 80:8000
     depends_on:
       - db
       - redis
-    restart: always
+#    volumes:
+#      - server_data:/app/data
 
-  #  client:
-  #    ...
+  client:
+    image: node:slim
+    build:
+      context: .
+    container_name: green_client
+    command: sh -c "cd client && npm install && npm start"
+    ports:
+      - 80:3000
+    restart: always
+    environment:
+      - NODE_ENV=production
+#    volumes:
+#      - client_data:/app/data
 
   celery:
     build:
       context: .
-    env_file:
-      - .env
     container_name: green_celery
     command: sh -c "cd server && celery -A tasks.tasks:celery_app worker --loglevel=INFO --pool=solo"
     restart: always
+    env_file:
+      - .env
     depends_on:
       - redis
+#    volumes:
+#      - celery_data:/app/data
 
   flower:
     build:
       context: .
-    env_file:
-      - .env
     container_name: green_flower
     command: sh -c "cd server && celery -A tasks.tasks:celery_app flower"
     restart: always
+    env_file:
+      - .env
     depends_on:
       - redis
       - celery
+#    volumes:
+#      - flower_data:/app/data
+
+#volumes:
+#  db_data:
+#  redis_data:
+#  server_data:
+#  client_data:
+#  celery_data:
+#  flower_data:

@@ -26,8 +26,8 @@ fastapi_users = FastAPIUsers[User, int](
 )
 
 app = FastAPI(
-    title='News',
-    version='0.27'
+    title=settings.NAME,
+    version='0.3',
 )
 app.add_middleware(
     CORSMiddleware,

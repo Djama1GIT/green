@@ -1,8 +1,9 @@
+import json
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert, delete, update, desc
+from sqlalchemy import select, insert, delete, update, desc, func
 from fastapi_cache.decorator import cache
 from fastapi_users import FastAPIUsers
 
@@ -12,6 +13,7 @@ from news.models import News
 from auth.models import User
 from auth.auth import auth_backend
 from auth.manager import get_user_manager
+from tasks.tasks import send_newsletter_for_all
 
 router = APIRouter(
     prefix='/news',
@@ -25,10 +27,15 @@ fastapi_users = FastAPIUsers[User, int](
 
 @router.get("/", response_model=List[NewsItem])
 @cache(expire=60)
-async def get_news(session: AsyncSession = Depends(get_async_session)):
-    result = await session.execute(select(News).order_by(desc(News.id)).limit(20))
+async def get_news(page: int = 1, size: int = 10, session: AsyncSession = Depends(get_async_session)):
+    offset = (page - 1) * size
+    result = await session.execute(select(News).order_by(desc(News.id)).offset(offset).limit(size))
     news = result.scalars().all()
-    return [i.json() for i in news]
+    total_count = await session.execute(select(func.count(News.id)))
+    response = Response(content=json.dumps([i.json() for i in news]), media_type="application/json")
+    response.headers["Access-Control-Expose-Headers"] = "X-Total-Count"
+    response.headers["X-Total-Count"] = str(total_count.scalar())
+    return response
 
 
 @router.get('/{news_id}', response_model=NewsItem)
@@ -47,6 +54,7 @@ async def add_news(news_item: NewsItemForInsert,
     try:
         await session.execute(statement)
         await session.commit()
+        send_newsletter_for_all.delay(news_item)
         return {"status": 200}
     except:
         await session.rollback()
