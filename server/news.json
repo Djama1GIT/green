@@ -1,175 +1,210 @@
 [
   {
+    "id": 1001,
     "title": "New JavaScript Framework Released",
     "description": "A new JavaScript framework has been released, promising faster rendering and improved performance.",
     "content": "The new framework, called SpeedJS, was released yesterday and has already gained significant attention in the developer community."
   },
   {
+    "id": 1002,
     "title": "Python 4.0 Announced",
     "description": "The Python Software Foundation has announced the upcoming release of Python 4.0.",
     "content": "Python 4.0 will include several new features and improvements, including enhanced performance and better memory management."
   },
   {
+    "id": 1003,
     "title": "Mobile App Tops App Store Charts",
     "description": "A new mobile app has skyrocketed to the top of the App Store charts, surpassing all other apps in popularity.",
     "content": "The app, which offers a unique and innovative user experience, has quickly gained a loyal user base and positive reviews."
   },
   {
+    "id": 1004,
     "title": "New Cybersecurity Threat Detected",
     "description": "Security experts have identified a new cybersecurity threat that targets vulnerable systems.",
     "content": "The threat, known as 'ShadowHacker', exploits a previously unknown vulnerability and can potentially compromise sensitive data. Users are advised to update their security software and exercise caution when browsing the internet."
   },
   {
+    "id": 1005,
     "title": "Artificial Intelligence Breakthrough",
     "description": "Researchers have made a significant breakthrough in artificial intelligence (AI) technology.",
     "content": "The new AI algorithm has achieved unprecedented accuracy in image recognition tasks, surpassing human performance in certain cases. This advancement has promising implications for various industries, including healthcare and autonomous vehicles."
   },
   {
+    "id": 1006,
     "title": "New Programming Language Released",
     "description": "A new programming language has been released, aiming to simplify software development and improve productivity.",
     "content": "The language, named 'Simplicity', features a clean and intuitive syntax and provides powerful abstractions for common programming tasks. Early adopters have praised its simplicity and expressiveness."
   },
   {
+    "id": 1007,
     "title": "Tech Company Acquires Startup",
     "description": "A prominent tech company has announced the acquisition of a promising startup.",
     "content": "The acquisition is expected to strengthen the company's position in the market and expand its product offerings. Both companies are excited about the opportunities for collaboration and innovation."
   },
   {
+    "id": 1008,
     "title": "New Version of Database Management System Released",
     "description": "A new version of a popular database management system has been released, introducing several new features and performance improvements.",
     "content": "The latest release of the database management system includes enhanced query optimization, improved scalability, and better support for distributed environments. Users are encouraged to upgrade to take advantage of these advancements."
   },
   {
+    "id": 1009,
     "title": "Software Engineer Job Market on the Rise",
     "description": "The demand for software engineers continues to grow, with an increasing number of job opportunities in the field.",
     "content": "Companies across various industries are seeking skilled software engineers to develop and maintain their software systems. This trend highlights the importance of software engineering skills in today's technology-driven world."
   },
   {
+    "id": 1010,
     "title": "New Framework for Building Web Applications",
     "description": "A new framework for building web applications has been released, offering developers a streamlined and efficient development experience.",
     "content": "The framework, named 'WebFlow', provides a comprehensive set of tools and libraries for building responsive and interactive web applications. Early adopters have praised its simplicity and flexibility."
   },
   {
+    "id": 1011,
     "title": "Data Breach Exposes Millions of User Records",
     "description": "A major data breach has occurred, exposing sensitive information of millions of users.",
     "content": "The breach, which affected a popular online service, highlights the importance of robust security measures and data protection practices. Affected users are advised to change their passwords and monitor their accounts for any suspicious activity."
   },
   {
+    "id": 1012,
     "title": "New Programming Language Tops GitHub Trending",
     "description": "A new programming language has gained significant popularity on GitHub, becoming the top trending repository.",
     "content": "Developers are drawn to the language's simplicity, performance, and extensive ecosystem of libraries and frameworks. The language's rise in popularity showcases the vibrant and dynamic nature of the programming community."
   },
   {
+    "id": 1013,
     "title": "Software Company Launches AI-Powered Chatbot",
     "description": "A software company has launched an AI-powered chatbot to enhance customer support and improve user experience.",
     "content": "The chatbot utilizes natural language processing and machine learning algorithms to understand and respond to user inquiries. Early feedback suggests that the chatbot has been successful in reducing response times and increasing customer satisfaction."
   },
   {
+    "id": 1014,
     "title": "New Version Control System Released",
     "description": "A new version control system has been released, offering developers enhanced collaboration and code management capabilities.",
     "content": "The version control system, named 'CodeSync', provides a seamless workflow for teams working on software projects. It offers features such as branch management, code reviews, and conflict resolution, making it easier for developers to work together efficiently."
   },
   {
+    "id": 1015,
     "title": "Tech Startup Raises $10 Million in Funding",
     "description": "A promising tech startup has secured $10 million in funding to further develop its innovative product.",
     "content": "The startup's product has garnered attention for its disruptive potential in the market. The funding will be used to expand the team, accelerate product development, and scale operations."
   },
   {
+    "id": 1016,
     "title": "New Framework for Machine Learning Released",
     "description": "A new framework for machine learning has been released, providing developers with powerful tools for building and deploying AI models.",
     "content": "The framework, named 'MLFlow', simplifies the process of training and deploying machine learning models, making it more accessible to developers. It supports various popular machine learning libraries and frameworks, enabling seamless integration into existing workflows."
   },
   {
+    "id": 1017,
     "title": "Software Company Launches Bug Bounty Program",
     "description": "A software company has launched a bug bounty program to incentivize security researchers to identify and report vulnerabilities in their software.",
     "content": "The program offers rewards to individuals who responsibly disclose security flaws, helping the company identify and address potential weaknesses. Bug bounty programs have become a popular practice in the industry to enhance software security."
   },
   {
+    "id": 1018,
     "title": "New IDE Released for Mobile App Development",
     "description": "A new integrated development environment (IDE) has been released, specifically designed for mobile app development.",
     "content": "The IDE provides a comprehensive set of tools and features to streamline the development process, including code completion, debugging, and device emulation. It aims to improve developer productivity and facilitate the creation of high-quality mobile applications."
   },
   {
+    "id": 1019,
     "title": "Software Engineering Bootcamp Offers Intensive Training",
     "description": "A software engineering bootcamp has launched, offering aspiring developers an intensive training program to kickstart their careers.",
     "content": "The bootcamp covers a wide range of topics, including programming languages, algorithms, and software development best practices. Participants will gain hands-on experience through real-world projects and mentorship from experienced software engineers."
   },
   {
+    "id": 1020,
     "title": "New Framework for Testing Web Applications",
     "description": "A new framework for testing web applications has been released, providing developers with powerful tools for automated testing.",
     "content": "The framework, named 'WebTest', simplifies the process of writing and executing tests for web applications. It supports various testing methodologies and provides detailed reports to help developers identify and fix issues quickly."
   },
   {
+    "id": 1021,
     "title": "Tech Company Launches Developer Certification Program",
     "description": "A tech company has launched a developer certification program to validate the skills and expertise of software engineers.",
     "content": "The program offers certifications in various technology domains, including programming languages, cloud computing, and data science. Achieving these certifications can enhance career prospects and demonstrate proficiency in specific areas of software engineering."
   },
   {
+    "id": 1022,
     "title": "New Framework for Building Microservices",
     "description": "A new framework for building microservices has been released, enabling developers to create scalable and modular software architectures.",
     "content": "The framework, named 'MicroFlow', provides a lightweight and flexible approach to building microservices. It offers features such as service discovery, load balancing, and fault tolerance, making it easier to develop and manage distributed systems."
   },
   {
+    "id": 1023,
     "title": "Software Company Launches Open Source Project",
     "description": "A software company has launched an open source project, inviting developers to contribute to the development of a new software tool.",
     "content": "The project aims to foster collaboration and innovation within the developer community. Developers can contribute code, report issues, and suggest new features, helping shape the future of the software tool."
   },
   {
+    "id": 1024,
     "title": "New Framework for Data Visualization Released",
     "description": "A new framework for data visualization has been released, providing developers with powerful tools for creating interactive and visually appealing charts and graphs.",
     "content": "The framework, named 'DataViz', offers a wide range of visualization options and supports various data formats. It aims to make data analysis and presentation more accessible and engaging for both developers and end-users."
   },
   {
+    "id": 1025,
     "title": "Software Company Implements Agile Development Methodology",
     "description": "A software company has transitioned to an agile development methodology to improve project management and delivery efficiency.",
     "content": "The agile methodology emphasizes iterative development, frequent communication, and collaboration among team members. This shift allows the company to respond quickly to changing requirements and deliver high-quality software in a timely manner."
   },
   {
+    "id": 1026,
     "title": "New Framework for Natural Language Processing Released",
     "description": "A new framework for natural language processing (NLP) has been released, providing developers with powerful tools for analyzing and understanding human language.",
     "content": "The framework, named 'NLPFlow', offers a wide range of NLP capabilities, including text classification, sentiment analysis, and named entity recognition. It aims to simplify the development of NLP applications and enable developers to leverage the power of language processing in their software."
   },
   {
+    "id": 1027,
     "title": "Software Company Launches Developer Community Platform",
     "description": "A software company has launched a developer community platform to facilitate knowledge sharing and collaboration among software engineers.",
     "content": "The platform provides a space for developers to ask questions, share insights, and showcase their projects. It aims to foster a supportive and vibrant community where developers can learn from each other and grow their skills."
   },
   {
+    "id": 1028,
     "title": "New Framework for Cross-Platform Mobile App Development",
     "description": "A new framework for cross-platform mobile app development has been released, enabling developers to build apps that run on multiple platforms with a single codebase.",
     "content": "The framework, named 'CrossFlow', leverages native components and APIs to deliver high-performance and native-like user experiences. It aims to simplify the development process and reduce the time and effort required to build cross-platform mobile apps."
   },
   {
+    "id": 1029,
     "title": "Software Company Implements Continuous Integration and Deployment",
     "description": "A software company has implemented continuous integration and deployment (CI/CD) practices to streamline the software development and release process.",
     "content": "CI/CD involves automating the build, testing, and deployment of software, allowing for faster and more frequent releases. This approach helps ensure the stability and quality of software while reducing the time and effort required for manual processes."
   },
   {
+    "id": 1030,
     "title": "New Framework for Cloud-Native Application Development",
     "description": "A new framework for cloud-native application development has been released, providing developers with tools and best practices for building scalable and resilient cloud-based applications.",
     "content": "The framework, named 'CloudFlow', offers features such as containerization, service discovery, and auto-scaling, making it easier to develop and deploy applications in cloud environments. It aims to enable developers to harness the full potential of cloud computing and build robust and efficient applications."
   },
   {
+    "id": 1031,
     "title": "Software Company Launches Accessibility Initiative",
     "description": "A software company has launched an accessibility initiative to ensure that its products are usable by individuals with disabilities.",
     "content": "The initiative involves conducting accessibility audits, implementing accessibility guidelines, and providing resources for developers to create inclusive software. By prioritizing accessibility, the company aims to make its products accessible to a wider range of users."
   },
   {
+    "id": 1032,
     "title": "New Framework for Test Automation Released",
     "description": "A new framework for test automation has been released, providing developers with tools and libraries for automating software testing processes.",
     "content": "The framework, named 'AutoTest', supports various testing frameworks and provides features such as test case management, test data generation, and test result reporting. It aims to improve the efficiency and effectiveness of software testing, enabling developers to deliver high-quality software with fewer manual efforts."
   },
   {
+    "id": 1033,
     "title": "Software Company Launches Code Review Platform",
     "description": "A software company has launched a code review platform to facilitate peer code reviews and improve code quality.",
     "content": "The platform provides a collaborative environment where developers can review each other's code, provide feedback, and suggest improvements. Code reviews help identify bugs, improve code readability, and promote best practices, ultimately leading to higher-quality software."
   },
   {
+    "id": 1034,
     "title": "New Framework for Big Data Processing Released",
     "description": "A new framework for big data processing has been released, providing developers with tools and libraries for processing and analyzing large datasets.",
     "content": "The framework, named 'BigDataFlow', offers features such as distributed computing, fault tolerance, and data parallelism, making it easier to handle big data workloads. It aims to enable developers to extract valuable insights from large datasets and build data-driven applications."
   },
   {
+    "id": 1035,
     "title": "Software Company Launches Mentorship Program",
     "description": "A software company has launched a mentorship program to support the professional growth and development of junior software engineers.",
     "content": "The program pairs junior engineers with experienced mentors who provide guidance, share knowledge, and offer career advice. By fostering a culture of mentorship, the company aims to nurture talent and empower, ..."

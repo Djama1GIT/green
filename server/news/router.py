@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+import asyncio
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update, desc, func
@@ -13,7 +14,7 @@ from news.models import News
 from auth.models import User
 from auth.auth import auth_backend
 from auth.manager import get_user_manager
-from tasks.tasks import send_newsletter_for_all
+from tasks.tasks import send_newsletter_for_email
 
 router = APIRouter(
     prefix='/news',
@@ -50,11 +51,26 @@ async def news_details(news_id: int, session: AsyncSession = Depends(get_async_s
 @router.post("/add_news", dependencies=[Depends(fastapi_users.current_user(active=True))])
 async def add_news(news_item: NewsItemForInsert,
                    session: AsyncSession = Depends(get_async_session)):
-    statement = insert(News).values(**news_item.dict())
+    news_item = news_item.dict()
+    news_item = ({"id": news_item["id"]} if news_item["id"] else {}) | \
+                 {
+                     "title": news_item["title"],
+                     "description": news_item["description"],
+                     "content": news_item["content"],
+                 }
+    statement = insert(News).values(**news_item)
     try:
         await session.execute(statement)
         await session.commit()
-        send_newsletter_for_all.delay(news_item)
+        statement = select(User.email)
+        result = await session.execute(statement)
+        users = result.all()
+        for user in users:
+            try:
+                send_newsletter_for_email.delay(user.email, news_item)
+            except Exception as exc:
+                print(exc)
+                print(f"Не удалось отправить рассылку пользователю {user.email}")
         return {"status": 200}
     except:
         await session.rollback()
@@ -87,4 +103,3 @@ async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_se
     except:
         await session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to delete news")
-

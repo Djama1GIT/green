@@ -23,9 +23,9 @@ services:
   server:
     build:
       context: .
+      dockerfile: Dockerfile.backend
     container_name: green_server
-#    command: sh -c "cd server && alembic upgrade head && python manage.py run"
-    command: sh -c "cd server && alembic upgrade head && python manage.py run --ac --auto" # don't use it with volumes
+    command: sh -c "alembic upgrade head && python manage.py run --ac --auto"
     ports:
       - 8080:8000
     restart: always
@@ -38,11 +38,10 @@ services:
 #      - server_data:/app/data
 
   client:
-    image: node:slim
     build:
       context: .
+      dockerfile: Dockerfile.frontend
     container_name: green_client
-    command: sh -c "cd client && npm install && npm start"
     ports:
       - 80:3000
     restart: always
@@ -54,8 +53,9 @@ services:
   celery:
     build:
       context: .
+      dockerfile: Dockerfile.backend
     container_name: green_celery
-    command: sh -c "cd server && celery -A tasks.tasks:celery_app worker --loglevel=INFO --pool=solo"
+    command: sh -c "celery -A tasks.tasks:celery_app worker --loglevel=INFO --pool=solo"
     restart: always
     env_file:
       - .env
@@ -67,8 +67,9 @@ services:
   flower:
     build:
       context: .
+      dockerfile: Dockerfile.backend
     container_name: green_flower
-    command: sh -c "cd server && celery -A tasks.tasks:celery_app flower"
+    command: sh -c "celery -A tasks.tasks:celery_app flower"
     restart: always
     env_file:
       - .env
