@@ -7,7 +7,7 @@ from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_users.password import PasswordHelper
 from db import async_session_maker
-from news.models import News
+from news.models import News, Category
 from auth.models import User
 from admin.chemas import UserRegister
 
@@ -28,7 +28,14 @@ async def create_superuser(method=None, session: AsyncSession = async_session_ma
         hashed_password=password_helper.hash(password),
         is_active=True,
         is_superuser=True,
-        is_verified=True
+        is_verified=True,
+        permissions={
+            'give_permissions': True,
+            'create_accounts': True,
+            'add_news': True,
+            'edit_news': True,
+            'delete_news': True,
+        }
     ).dict())
     try:
         await session.execute(statement)
@@ -36,13 +43,19 @@ async def create_superuser(method=None, session: AsyncSession = async_session_ma
         print("[Create SuperUser]: Successful")
     except:
         await session.rollback()
-        raise Exception("[Create SuperUser]: Failed to register superuser")
+        print("[Create SuperUser]: Failed to register superuser")
     finally:
         await session.close()
 
 
 async def add_initial_data(session: AsyncSession = async_session_maker()):
     try:
+        with open("categories.json", 'r') as categories_list:
+            categories_list = json.load(categories_list)
+            for category_item in categories_list:
+                statement = insert(Category).values(**category_item)
+                await session.execute(statement)
+            await session.commit()
         with open("news.json", 'r') as news_list:
             news_list = json.load(news_list)
             for news_item in news_list:
@@ -52,7 +65,7 @@ async def add_initial_data(session: AsyncSession = async_session_maker()):
             print("[Add initial data]: Successful")
     except:
         await session.rollback()
-        raise Exception("[Add initial data]: Failed to add initial data")
+        print("[Add initial data]: Failed to add initial data")
     finally:
         await session.close()
 

@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1000,
+    "name": "IT"
+  },
+  {
+    "id": 1001,
+    "name": "Artificial intelligence"
+  },
+  {
+    "id": 1002,
+    "name": "Blockchain"
+  },
+  {
+    "id": 1003,
+    "name": "Cybersecurity"
+  },
+  {
+    "id": 1004,
+    "name": "Internet of Things (IoT)"
+  },
+  {
+    "id": 1005,
+    "name": "Software development"
+  },
+  {
+    "id": 1006,
+    "name": "Cloud computing"
+  },
+  {
+    "id": 1007,
+    "name": "Big data and analytics"
+  },
+  {
+    "id": 1008,
+    "name": "Machine learning"
+  },
+  {
+    "id": 1009,
+    "name": "Robotics"
+  },
+  {
+    "id": 1010,
+    "name": "Virtual and Augmented Reality (VR/AR)"
+  }
+]

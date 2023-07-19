@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1001,
+    "role": "teapot",
+    "permissions": {
+        "give_permissions": false,
+        "create_accounts": false,
+        "add_news": false,
+        "edit_news": false,
+        "delete_news": false
+    }
+  },
+  {
+    "id": 1002,
+    "role": "editor",
+    "permissions": {
+        "give_permissions": false,
+        "create_accounts": false,
+        "add_news": true,
+        "edit_news": true,
+        "delete_news": false
+    }
+  },
+  {
+    "id": 1003,
+    "role": "moderator",
+    "permissions": {
+        "give_permissions": false,
+        "create_accounts": false,
+        "add_news": true,
+        "edit_news": true,
+        "delete_news": true
+    }
+  },
+  {
+    "id": 1004,
+    "role": "admin",
+    "permissions": {
+        "give_permissions": false,
+        "create_accounts": true,
+        "add_news": true,
+        "edit_news": true,
+        "delete_news": true
+    }
+  },
+  {
+    "id": 1005,
+    "role": "superuser",
+    "permissions": {
+        "give_permissions": true,
+        "create_accounts": true,
+        "add_news": true,
+        "edit_news": true,
+        "delete_news": true
+    }
+  }
+]

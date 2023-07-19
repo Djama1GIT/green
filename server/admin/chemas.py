@@ -7,3 +7,4 @@ class UserRegister(BaseModel):
     is_active: bool
     is_superuser: bool
     is_verified: bool
+    permissions: dict
