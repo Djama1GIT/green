@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.websocket('/currency_rates')
+@router.websocket('/currency_rates', name="currency")
 async def currency(websocket: WebSocket):
     """
     Hypothetically, there may be a request to an external API here
@@ -37,7 +37,7 @@ async def currency(websocket: WebSocket):
         pass
 
 
-@router.get('/weather', response_model=Weather)
+@router.get('/weather', response_model=Weather, name="weather")
 async def weather():
     """
     Hypothetically, there may be a request to an external API here

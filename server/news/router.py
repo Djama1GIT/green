@@ -29,7 +29,7 @@ fastapi_users = FastAPIUsers[User, int](
 )
 
 
-@router.get("/categories")
+@router.get("/categories", name="news_categories")
 async def categories(session: AsyncSession = Depends(get_async_session)):
     statement = select(Category)
     try:
@@ -39,7 +39,7 @@ async def categories(session: AsyncSession = Depends(get_async_session)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@router.get("/follow")
+@router.get("/follow", name="news_follow")
 async def follow(email: str, session: AsyncSession = Depends(get_async_session)):
     statement = select(Follower).where(Follower.email == email)
     try:
@@ -58,7 +58,7 @@ async def follow(email: str, session: AsyncSession = Depends(get_async_session))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to follow")
 
 
-@router.get("/unfollow")
+@router.get("/unfollow", name="news_unfollow")
 async def unfollow(token: str, session: AsyncSession = Depends(get_async_session)):
     statement = select(Follower).where(Follower.token == token)
     try:
@@ -73,7 +73,7 @@ async def unfollow(token: str, session: AsyncSession = Depends(get_async_session
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to unfollow")
 
 
-@router.get('/{news_id}', response_model=NewsItem)
+@router.get('/{news_id}', response_model=NewsItem, name="news_by_id")
 async def news_details(news_id: int, session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(select(News).where(News.id == news_id))
     news = result.scalars().first()
@@ -82,7 +82,7 @@ async def news_details(news_id: int, session: AsyncSession = Depends(get_async_s
     return news.json()
 
 
-@router.get("/", response_model=List[NewsItem])
+@router.get("/", response_model=List[NewsItem], name="news_list")
 @cache(expire=60)
 async def get_news(page: int = 1,
                    size: int = 10,
@@ -104,7 +104,7 @@ async def get_news(page: int = 1,
     return response
 
 
-@router.post("/add_news")
+@router.post("/add_news", name="add_news")
 async def add_news(request: Request,
                    news_item: NewsItemForInsert,
                    session: AsyncSession = Depends(get_async_session),
@@ -112,14 +112,7 @@ async def add_news(request: Request,
     if not user.is_superuser and ("add_news" not in user.permissions or not user.permissions["add_news"]):
         raise HTTPException(status_code=403,
                             detail=f"User does not have required permissions")
-    news_item = news_item.dict()
-    news_item = ({"id": news_item["id"]} if news_item["id"] else {}) | \
-                {
-                    "title": news_item["title"],
-                    "description": news_item["description"],
-                    "content": news_item["content"],
-                }
-    statement = insert(News).values(**news_item)
+    statement = insert(News).values(**{k: v for k, v in news_item.dict().items() if v is not None})
     try:
         await session.execute(statement)
         await session.commit()
@@ -128,7 +121,11 @@ async def add_news(request: Request,
         followers = result.all()
         for follower in followers:
             try:
-                send_newsletter_for_email.delay(follower.email, follower.token, request.headers["host"], news_item)
+                send_newsletter_for_email.delay(follower.email,
+                                                follower.token,
+                                                str(request.url_for("news_unfollow")),
+                                                news_item.dict())
+                import logging
             except Exception as exc:
                 print(exc)
                 print(f"Не удалось отправить рассылку фолловеру {follower.email}")
@@ -138,7 +135,7 @@ async def add_news(request: Request,
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add news")
 
 
-@router.put("/edit_news")
+@router.put("/edit_news", name="edit_news")
 async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(get_async_session),
                     user=Depends(fastapi_users.current_user())):
     if not user.is_superuser and ("edit_news" not in user.permissions or not user.permissions["edit_news"]):
@@ -157,7 +154,7 @@ async def edit_news(news_item: NewsItemForPut, session: AsyncSession = Depends(g
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to edit news")
 
 
-@router.delete("/delete_news")
+@router.delete("/delete_news", name="delete_news")
 async def delete_news(news_id: int,
                       session: AsyncSession = Depends(get_async_session),
                       user=Depends(fastapi_users.current_user())):

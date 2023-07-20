@@ -1,3 +1,5 @@
+from jinja2 import Environment, FileSystemLoader
+
 from pydantic import EmailStr
 import smtplib
 from email.message import EmailMessage
@@ -27,28 +29,18 @@ def send_message(message):
 
 
 def welcome_message(email: EmailStr, password: str):
-    return message_generator(email,
-                             '<div>'
-                             f'<h3>Здравствуйте, {email.split("@")[0]}</h3>'
-                             f'<p>Вам были выданы права редактора на сайте {settings.NAME}.</p>'
-                             f'<p>Ваш логин: {email}</p>'
-                             f'<p>Ваш пароль: {password}</p>'
-                             '</div>')
+    env = Environment(loader=FileSystemLoader('./templates/tasks/'))
+    template = env.get_template('welcome.html')
+    username = email.split("@")[0]
+    html_content = template.render(email=email, password=password, username=username, settings=settings)
+    return message_generator(email, html_content)
 
 
-def newsletter(email: EmailStr, token: str, host: str, news: dict):
-    return message_generator(email,
-                             '<div>'
-                             f'<h1>{news["title"]}</h1>'
-                             f'<h2>{news["description"]}</h3>'
-                             '<br>'
-                             f'<p>{news["content"]}</p>'
-                             f'<small>Отписаться от рассылки: '
-                             f'<a href="http://{host}/news/unfollow?token={token}">'
-                             f'http://{host}/news/unfollow?token={token}'
-                             f'</a>'
-                             f'</small>',
-                             subject=news["title"])
+def newsletter(email: EmailStr, token: str, unfollow_link, news: dict):
+    env = Environment(loader=FileSystemLoader('./templates/tasks/'))
+    template = env.get_template('newsletter.html')
+    html_content = template.render(news=news, token=token, unfollow_link=unfollow_link)
+    return message_generator(email, html_content, subject=news["title"])
 
 
 @celery_app.task
@@ -58,6 +50,6 @@ def send_welcome_message(email: EmailStr, password: str):
 
 
 @celery_app.task
-def send_newsletter_for_email(email: EmailStr, token: str, host: str, news: dict):
-    message = newsletter(email, token, host, news)
+def send_newsletter_for_email(email: EmailStr, token: str, unfollow_link: str, news: dict):
+    message = newsletter(email, token, unfollow_link, news)
     send_message(message)

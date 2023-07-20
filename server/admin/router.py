@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get('/statistics/')
+@router.get('/statistics/', name="admin_statistics")
 async def statistics(session: AsyncSession = Depends(get_async_session)):
     try:
         result = await session.execute(select(News.id, News.views))
@@ -25,7 +25,7 @@ async def statistics(session: AsyncSession = Depends(get_async_session)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to get statistics")
 
 
-@router.get('/statistics/{news_id}')
+@router.get('/statistics/{news_id}', name="admin_statistics_by_id")
 async def statistics(news_id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         result = await session.execute(select(News.views).where(News.id == news_id))
@@ -39,7 +39,7 @@ async def statistics(news_id: int, session: AsyncSession = Depends(get_async_ses
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to get statistics")
 
 
-@router.post('/reg_editor/')
+@router.post('/reg_editor/', name="reg_editor")
 async def reg_editor(email: str, session: AsyncSession = Depends(get_async_session)):
     password_helper = PasswordHelper()
     password = password_helper.generate()

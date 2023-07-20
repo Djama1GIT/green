@@ -1,0 +1,12 @@
+<div>
+    <h1>{{ news.title }}</h1>
+    <h2>{{ news.description }}</h2>
+    <br>
+    <p>{{ news.content }}</p>
+    <small>
+        Отписаться от рассылки:
+        <a href="{{ unfollow_link }}?token={{ token }}">
+            {{ unfollow_link }}?token={{ token }}
+        </a>
+    </small>
+</div>

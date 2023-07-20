@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -7,4 +9,4 @@ class UserRegister(BaseModel):
     is_active: bool
     is_superuser: bool
     is_verified: bool
-    permissions: dict
+    permissions: Optional[dict]
