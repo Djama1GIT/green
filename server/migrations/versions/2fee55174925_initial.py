@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 0a4dab878248
+Revision ID: 2fee55174925
 Revises: 
-Create Date: 2023-07-20 00:37:59.097394
+Create Date: 2023-07-20 12:32:23.308782
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0a4dab878248'
+revision = '2fee55174925'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,6 +25,15 @@ def upgrade() -> None:
     sa.UniqueConstraint('name')
     )
     op.create_index(op.f('ix_categories_id'), 'categories', ['id'], unique=False)
+    op.create_table('follower',
+    sa.Column('uuid', sa.UUID(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('token', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('uuid')
+    )
+    op.create_index(op.f('ix_follower_email'), 'follower', ['email'], unique=True)
+    op.create_index(op.f('ix_follower_token'), 'follower', ['token'], unique=False)
+    op.create_index(op.f('ix_follower_uuid'), 'follower', ['uuid'], unique=False)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
@@ -63,6 +72,10 @@ def downgrade() -> None:
     op.drop_table('news')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
+    op.drop_index(op.f('ix_follower_uuid'), table_name='follower')
+    op.drop_index(op.f('ix_follower_token'), table_name='follower')
+    op.drop_index(op.f('ix_follower_email'), table_name='follower')
+    op.drop_table('follower')
     op.drop_index(op.f('ix_categories_id'), table_name='categories')
     op.drop_table('categories')
     # ### end Alembic commands ###

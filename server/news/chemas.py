@@ -9,6 +9,8 @@ class NewsItem(BaseModel):
     description: str = Field(min_length=10)
     content: Optional[str]
     views: int
+    time: str
+    category: str
 
 
 class NewsItemForInsert(BaseModel):
@@ -16,6 +18,7 @@ class NewsItemForInsert(BaseModel):
     title: str = Field(min_length=10)
     description: str = Field(min_length=10)
     content: Optional[str]
+    category: str
 
 
 class NewsItemForPut(BaseModel):
@@ -23,3 +26,5 @@ class NewsItemForPut(BaseModel):
     title: str = Field(min_length=10)
     description: str = Field(min_length=10)
     content: Optional[str]
+    time: str
+    category: str

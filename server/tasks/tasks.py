@@ -36,13 +36,18 @@ def welcome_message(email: EmailStr, password: str):
                              '</div>')
 
 
-def newsletter(email: EmailStr, news: dict):
+def newsletter(email: EmailStr, token: str, host: str, news: dict):
     return message_generator(email,
                              '<div>'
                              f'<h1>{news["title"]}</h1>'
                              f'<h2>{news["description"]}</h3>'
                              '<br>'
-                             f'<p>{news["content"]}</p>',
+                             f'<p>{news["content"]}</p>'
+                             f'<small>Отписаться от рассылки: '
+                             f'<a href="http://{host}/news/unfollow?token={token}">'
+                             f'http://{host}/news/unfollow?token={token}'
+                             f'</a>'
+                             f'</small>',
                              subject=news["title"])
 
 
@@ -53,6 +58,6 @@ def send_welcome_message(email: EmailStr, password: str):
 
 
 @celery_app.task
-def send_newsletter_for_email(email: EmailStr, news: dict):
-    message = newsletter(email, news)
+def send_newsletter_for_email(email: EmailStr, token: str, host: str, news: dict):
+    message = newsletter(email, token, host, news)
     send_message(message)

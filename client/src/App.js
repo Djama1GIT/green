@@ -9,11 +9,30 @@ function App() {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [email, setEmail] = useState('');
+  const [subscribeStatus, setSubscribeStatus] = useState(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/news/categories');
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const newsResponse = await fetch(`http://localhost:8080/news/?page=${page}&size=${size}`);
+        const categoryParam = selectedCategory ? `&category=${selectedCategory}` : '';
+        const newsResponse = await fetch(`http://localhost:8080/news/?page=${page}&size=${size}${categoryParam}`);
         const newsData = await newsResponse.json();
         setNews(newsData);
 
@@ -45,7 +64,7 @@ function App() {
     return () => {
       currencySocket.close();
     };
-  }, [page, size]);
+  }, [page, size, selectedCategory]);
 
   const handleNewsClick = async (newsId) => {
     try {
@@ -70,8 +89,32 @@ function App() {
     setSize(parseInt(event.target.value));
   };
 
+  const handleCategoryChange = (event) => {
+    const newCategory = event.target.value;
+    setSelectedCategory(newCategory || null);
+    setPage(1);
+  };
+
   const totalPages = Math.ceil(totalCount / size);
   const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handleSubscribeClick = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/news/follow?email=${email}`);
+      if (response.status === 200) {
+        setSubscribeStatus('success');
+      } else {
+        setSubscribeStatus('error');
+      }
+    } catch (error) {
+      console.error(error);
+      setSubscribeStatus('error');
+    }
+  };
 
   return (
     <div className="app">
@@ -82,25 +125,40 @@ function App() {
             <div key={newsItem.id} className="news-item" onClick={() => handleNewsClick(newsItem.id)}>
               <h2>{newsItem.title}</h2>
               <p>{newsItem.description}</p>
+              <p>Category: {newsItem.category}</p>
+              <p>Publication Time: {newsItem.time}</p>
             </div>
           ))}
-          <div className="pagination">
-            <label htmlFor="page">Page:</label>
-            <select id="page" name="page" value={page} onChange={handlePageChange}>
-              {pageNumbers.map((pageNumber) => (
-                <option key={pageNumber} value={pageNumber}>
-                  {pageNumber}
-                </option>
-              ))}
-            </select>
-            <label htmlFor="size">Size:</label>
-            <select id="size" name="size" value={size} onChange={handleSizeChange}>
-              {[10, 20, 30].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
+          <div className="filters">
+            <div class="category">
+                <label htmlFor="category">Category:</label>
+                <select id="category" name="category" value={selectedCategory || ''} onChange={handleCategoryChange}>
+                  <option value="">All</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+            </div>
+            <div className="pagination">
+                <label htmlFor="page">Page:</label>
+                <select id="page" name="page" value={page} onChange={handlePageChange}>
+                  {pageNumbers.map((pageNumber) => (
+                    <option key={pageNumber} value={pageNumber}>
+                      {pageNumber}
+                    </option>
+                  ))}
+                </select>
+                <label htmlFor="size">Size:</label>
+                <select id="size" name="size" value={size} onChange={handleSizeChange}>
+                  {[10, 20, 30].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      {pageSize}
+                    </option>
+                  ))}
+                </select>
+            </div>
           </div>
         </div>
       ) : (
@@ -140,6 +198,16 @@ function App() {
               </p>
             </div>
           )}
+        </div>
+        <div className="subscribe">
+          <h2>Subscribe to our newsletter</h2>
+            {subscribeStatus === 'success' && <p className="subscribe-success">You have subscribed successfully!</p>}
+            {subscribeStatus === 'error' && <p className="subscribe-error">An error occurred while subscribing. Please try again later.</p>}
+          <div className="subscribe-form">
+            <label htmlFor="email">Email:</label>
+            <input type="email" id="email" name="email" value={email} onChange={handleEmailChange} required/>
+            <button onClick={handleSubscribeClick}>Subscribe</button>
+          </div>
         </div>
       </div>
     </div>

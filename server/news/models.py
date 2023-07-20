@@ -1,8 +1,11 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+import hashlib
+
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, UUID
 from sqlalchemy.orm import relationship
 from db import Base
 
 from datetime import datetime
+
 
 class Category(Base):
     __tablename__ = 'categories'
@@ -34,3 +37,16 @@ class News(Base):
             'time': str(self.time),
             'category': self.category
         }
+
+
+class Follower(Base):
+    __tablename__ = 'follower'
+
+    uuid = Column(UUID, primary_key=True, index=True)
+    email = Column(String, nullable=False, index=True, unique=True)
+    token = Column(String, nullable=False, index=True)
+
+    @staticmethod
+    def generate_token(uuid, email):
+        data = f"{uuid}+{email}".encode('utf-8')
+        return hashlib.sha256(data).hexdigest()
