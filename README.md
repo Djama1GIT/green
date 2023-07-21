@@ -13,7 +13,10 @@ git clone https://github.com/Djama1GIT/green.git
 cd green
 ```
 
-3. Запустите проект:
+3. Настройте переменные окружения в файле .env
+<small>Не требуется, если Вы не собираетесь использовать работу с почтой</small>
+
+4. Запустите проект:
 
 ```bash
 docker-compose up --build
