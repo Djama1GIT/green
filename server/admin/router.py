@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_async_session
@@ -11,8 +13,11 @@ router = APIRouter(
 
 
 @router.get('/statistics/', name="admin_statistics")
-async def statistics(session: AsyncSession = Depends(get_async_session)):
-    return await get_statistics(session)
+async def statistics(page: int = 1,
+                     size: int = 10,
+                     category: Optional[str] = None,
+                     session: AsyncSession = Depends(get_async_session)):
+    return await get_statistics(page, size, category, session)
 
 
 @router.get('/statistics/{news_id}', name="admin_statistics_by_id")

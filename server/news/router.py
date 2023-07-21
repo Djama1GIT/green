@@ -1,82 +1,65 @@
-from typing import List, Optional
-
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
+from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
-from fastapi_users import FastAPIUsers
 
 from .chemas import NewsItem, NewsItemForInsert, NewsItemForPut
 from db import get_async_session
-from auth.models import User
-from auth.auth import auth_backend
-from auth.manager import get_user_manager
 
-from .repository import categories_repository, news_repository, news_details_repository, \
-    follow_repository, unfollow_repository, update_news_repository, add_news_repository, delete_news_repository
+from .repository import NewsRepository
+from .dependencies import check_permissions, get_news_repository
+from utils.dependencies import NewsPaginator
 
 router = APIRouter(
     prefix='/news',
     tags=['News']
 )
-fastapi_users = FastAPIUsers[User, int](
-    get_user_manager,
-    [auth_backend],
-)
 
 
 @router.get("/categories", name="news_categories")
-async def categories(session: AsyncSession = Depends(get_async_session)):
-    return await categories_repository(session)
+async def categories(news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    return await news_repo.categories()
 
 
 @router.get("/follow", name="news_follow")
-async def follow(email: str, session: AsyncSession = Depends(get_async_session)):
-    return await follow_repository(email, session)
+async def follow(email: str,
+                 news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    return await news_repo.follow(email)
 
 
 @router.get("/unfollow", name="news_unfollow")
-async def unfollow(token: str, session: AsyncSession = Depends(get_async_session)):
-    return await unfollow_repository(token, session)
+async def unfollow(token: str,
+                   news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    return await news_repo.unfollow(token)
 
 
 @router.get('/{news_id}', response_model=NewsItem, name="news_by_id")
-async def news_details(news_id: int, session: AsyncSession = Depends(get_async_session)):
-    return await news_details_repository(news_id, session)
+async def news_details(news_id: int,
+                       news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    return await news_repo.news_details(news_id)
 
 
 @router.get("/", response_model=List[NewsItem], name="news_list")
 @cache(expire=60)
-async def news(page: int = 1,
-               size: int = 10,
-               category: Optional[str] = None,
-               session: AsyncSession = Depends(get_async_session)):
-    return await news_repository(page, size, category, session)
+async def news(paginator=Depends(NewsPaginator),
+               news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    return await news_repo.news(**paginator.dict())
 
 
-@router.post("/add_news", name="add_news")
+@router.post("/add_news", name="add_news", dependencies=[Depends(check_permissions("add_news"))])
 async def add_news(news_item: NewsItemForInsert,
-                   session: AsyncSession = Depends(get_async_session),
-                   user=Depends(fastapi_users.current_user())):
-    if not user.is_superuser and ("add_news" not in user.permissions or not user.permissions["add_news"]):
-        raise HTTPException(status_code=403, detail=f"User does not have required permissions")
-    return await add_news_repository(news_item, session)
+                   news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    return await news_repo.add_news(news_item)
 
 
-@router.put("/edit_news", name="edit_news")
+@router.put("/edit_news", name="edit_news", dependencies=[Depends(check_permissions("edit_news"))])
 async def update_news(news_item: NewsItemForPut,
-                      session: AsyncSession = Depends(get_async_session),
-                      user=Depends(fastapi_users.current_user())):
-    if not user.is_superuser and ("edit_news" not in user.permissions or not user.permissions["edit_news"]):
-        raise HTTPException(status_code=403, detail="User does not have required permissions")
-    await update_news_repository(news_item, session)
+                      news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    await news_repo.update_news(news_item)
     return {"status": 200}
 
 
-@router.delete("/delete_news", name="delete_news")
+@router.put("/delete_news", name="delete_news", dependencies=[Depends(check_permissions("delete_news"))])
 async def delete_news(news_id: int,
-                      session: AsyncSession = Depends(get_async_session),
-                      user=Depends(fastapi_users.current_user())):
-    if not user.is_superuser and ("delete_news" not in user.permissions or not user.permissions["delete_news"]):
-        raise HTTPException(status_code=403, detail="User does not have required permissions")
-    await delete_news_repository(news_id, session)
+                      news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
+    await news_repo.delete_news(news_id)
     return {"status": 200}

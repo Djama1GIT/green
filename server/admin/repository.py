@@ -1,5 +1,7 @@
+from typing import Optional
+
 from fastapi import HTTPException, status
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_users.password import PasswordHelper
 from news.models import News
@@ -9,9 +11,15 @@ from .chemas import UserRegister
 from tasks.tasks import send_welcome_message
 
 
-async def get_statistics(session: AsyncSession):
+async def get_statistics(page: int, size: int, category: Optional[str], session: AsyncSession):
     try:
-        result = await session.execute(select(News.id, News.views))
+        size = min(size, 50)
+        offset = (page - 1) * size
+        statement = select(News.id, News.views)
+        if category:
+            statement = statement.where(News.category == category)
+        statement = statement.order_by(desc(News.time)).offset(offset).limit(size)
+        result = await session.execute(statement)
         news = result.all()
         return [{"id": i[0], "views": i[1]} for i in news]
     except:

@@ -2,15 +2,12 @@ from fastapi import FastAPI, Request, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from fastapi_users import FastAPIUsers
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
 from pydantic import ValidationError
 
 from auth.auth import auth_backend
-from auth.manager import get_user_manager
-from auth.models import User
 # from auth.schemas import UserRead, UserCreate
 
 from news.router import router as news_router
@@ -19,11 +16,8 @@ from utils.router import router as utils_router
 
 from redis import asyncio as aioredis
 from config import settings
+from utils.utils import fastapi_users
 
-fastapi_users = FastAPIUsers[User, int](
-    get_user_manager,
-    [auth_backend],
-)
 
 app = FastAPI(
     title=settings.NAME,
