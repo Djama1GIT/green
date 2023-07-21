@@ -7,7 +7,7 @@ from db import get_async_session
 
 from .repository import NewsRepository
 from .dependencies import check_permissions, get_news_repository
-from utils.dependencies import NewsPaginator
+from utils.dependencies import Paginator
 
 router = APIRouter(
     prefix='/news',
@@ -40,7 +40,7 @@ async def news_details(news_id: int,
 
 @router.get("/", response_model=List[NewsItem], name="news_list")
 @cache(expire=60)
-async def news(paginator=Depends(NewsPaginator),
+async def news(paginator: Paginator = Depends(),
                news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
     return await news_repo.news(**paginator.dict())
 
@@ -58,7 +58,7 @@ async def update_news(news_item: NewsItemForPut,
     return {"status": 200}
 
 
-@router.put("/delete_news", name="delete_news", dependencies=[Depends(check_permissions("delete_news"))])
+@router.delete("/delete_news", name="delete_news", dependencies=[Depends(check_permissions("delete_news"))])
 async def delete_news(news_id: int,
                       news_repo: NewsRepository = Depends(get_news_repository(get_async_session))):
     await news_repo.delete_news(news_id)

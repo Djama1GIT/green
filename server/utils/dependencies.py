@@ -1,8 +1,8 @@
 from typing import Optional
 
 
-class NewsPaginator:
-    def __init__(self, page: int = 10, size: int = 10, category: Optional[str] = None):
+class Paginator:
+    def __init__(self, page: int = 1, size: int = 10, category: Optional[str] = None):
         self.page = page
         self.size = size
         self.category = category

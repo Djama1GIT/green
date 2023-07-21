@@ -1,10 +1,9 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_async_session
 
-from .repository import get_statistics, get_statistics_by_id, create_editor
+from .repository import AdminRepository
+from .dependencies import get_admin_repository
+from utils.dependencies import Paginator
 
 router = APIRouter(
     prefix='/admin',
@@ -13,18 +12,18 @@ router = APIRouter(
 
 
 @router.get('/statistics/', name="admin_statistics")
-async def statistics(page: int = 1,
-                     size: int = 10,
-                     category: Optional[str] = None,
-                     session: AsyncSession = Depends(get_async_session)):
-    return await get_statistics(page, size, category, session)
+async def statistics(paginator: Paginator = Depends(),
+                     admin_repo: AdminRepository = Depends(get_admin_repository(get_async_session))):
+    return await admin_repo.get_statistics(**paginator.dict())
 
 
 @router.get('/statistics/{news_id}', name="admin_statistics_by_id")
-async def statistics(news_id: int, session: AsyncSession = Depends(get_async_session)):
-    return await get_statistics_by_id(news_id, session)
+async def statistics(news_id: int,
+                     admin_repo: AdminRepository = Depends(get_admin_repository(get_async_session))):
+    return await admin_repo.get_statistics_by_id(news_id)
 
 
 @router.post('/reg_editor/', name="reg_editor")
-async def reg_editor(email: str, session: AsyncSession = Depends(get_async_session)):
-    return await create_editor(email, session)
+async def reg_editor(email: str,
+                     admin_repo: AdminRepository = Depends(get_admin_repository(get_async_session))):
+    return await admin_repo.create_editor(email)

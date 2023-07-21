@@ -10,7 +10,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
 from fastapi_users import FastAPIUsers
-
+import sys, os
+server_path = os.path.join(os.getcwd(), "")
+sys.path.insert(0, server_path)
 from auth.auth import auth_backend
 from auth.manager import get_user_manager
 from auth.models import User
