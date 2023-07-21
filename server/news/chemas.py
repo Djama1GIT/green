@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -9,7 +10,7 @@ class NewsItem(BaseModel):
     description: str = Field(min_length=10)
     content: Optional[str]
     views: int
-    time: str
+    time: datetime
     category: str
 
 
@@ -26,5 +27,5 @@ class NewsItemForPut(BaseModel):
     title: str = Field(min_length=10)
     description: str = Field(min_length=10)
     content: Optional[str]
-    time: str
+    time: datetime
     category: str

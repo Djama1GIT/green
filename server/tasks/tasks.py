@@ -1,3 +1,6 @@
+import os
+import sys
+
 from jinja2 import Environment, FileSystemLoader
 
 from pydantic import EmailStr
@@ -5,9 +8,13 @@ import smtplib
 from email.message import EmailMessage
 from celery import Celery
 
-from .smtp_config import settings
+server_path = os.path.join(os.getcwd(), "")
+sys.path.insert(0, server_path)
+from config import settings
 
 celery_app = Celery('tasks', broker=f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}")
+
+path_to_templates = './templates/tasks/'
 
 
 def message_generator(email: EmailStr, content: str, subject: str = settings.NAME, subtype='html'):
@@ -17,6 +24,14 @@ def message_generator(email: EmailStr, content: str, subject: str = settings.NAM
     message["To"] = email
     message.set_content(content, subtype=subtype)
     return message
+
+
+def templater(template, **kwargs):
+    env = Environment(loader=FileSystemLoader(path_to_templates))
+    template = env.get_template(template)
+    html_content = template.render(**kwargs)
+
+    return html_content
 
 
 def send_message(message):
@@ -29,17 +44,13 @@ def send_message(message):
 
 
 def welcome_message(email: EmailStr, password: str):
-    env = Environment(loader=FileSystemLoader('./templates/tasks/'))
-    template = env.get_template('welcome.html')
     username = email.split("@")[0]
-    html_content = template.render(email=email, password=password, username=username, settings=settings)
+    html_content = templater('welcome.html', email=email, password=password, username=username, settings=settings)
     return message_generator(email, html_content)
 
 
 def newsletter(email: EmailStr, token: str, unfollow_link, news: dict):
-    env = Environment(loader=FileSystemLoader('./templates/tasks/'))
-    template = env.get_template('newsletter.html')
-    html_content = template.render(news=news, token=token, unfollow_link=unfollow_link)
+    html_content = templater('newsletter.html', news=news, token=token, unfollow_link=unfollow_link)
     return message_generator(email, html_content, subject=news["title"])
 
 
