@@ -1,4 +1,4 @@
-# Green API
+# Green
 
 Green - проект, основанный на FastAPI
 
