@@ -1,47 +1,43 @@
 # Green
 
-Green - проект, основанный на FastAPI
+Green is a project based on FastAPI.
 
-## Установка и настройка
+## Installation and Setup
 
-1. Установите Docker и Docker Compose, если они еще не установлены в вашей системе.
+1. Install Docker and Docker Compose if they are not already installed on your system.
 
-2. Клонируйте репозиторий проекта:
+2. Clone the project repository:
 
 ```bash
 git clone https://github.com/Djama1GIT/green.git
 cd green
 ```
+3. Configure the environment variables in the .env file (Not required if you don't plan on using mail functionality).
 
-3. Настройте переменные окружения в файле .env (Не требуется, если Вы не собираетесь использовать работу с почтой)
-
-4. Запустите проект:
+4. Start the project:
 
 ```bash
 docker-compose up --build
 ```
+## User Interface
 
-## Пользовательский интерфейс
+After starting the project, you can access the Swagger user interface at: http://localhost:8080/docs.<br>
+In Swagger, you can view the available endpoints and their parameters, and also make requests to the API.
 
-После запуска проекта вы можете получить доступ к пользовательскому интерфейсу Swagger по адресу: http://localhost:8080/docs. В Swagger вы можете просмотреть доступные эндпоинты и их параметры, а также выполнять запросы к API.
-
-Также реализован небольшой пример использования API:
-
-Главная страница фронт-енда: http://localhost/
+A small example of API usage is also implemented:<br>
+Front-end home page: http://localhost/
 
 Flower: http://localhost:5555/
 
-## Используемые технологии
+## Technologies Used
 
-- Python - Язык программирования, на котором написан проект.
-- REST - Архитектурный стиль для построения распределенных систем, используемый в проекте для создания API.
-- FastAPI - Фреймворк для создания API на Python, используемый в проекте для реализации REST API.
-- Redis - In-memory база данных, используемая в проекте для кэширования данных и хранения задач Celery.
-- Celery - Библиотека для выполнения фоновых задач, используемая в проекте для обработки долгих операций в фоновом режиме.
-- Flower - Веб-интерфейс для мониторинга состояния задач Celery, используемый в проекте для отслеживания выполнения задач.
-- PostgreSQL - Реляционная база данных, используемая в проекте для хранения информации.
-- SQLAlchemy - ORM (Object-Relational Mapping), используемый в проекте для работы с базой данных.
-- alembic - Библиотека для миграции базы данных, используемая в проекте для обновления структуры базы данных при изменении моделей данных.
-- Docker - Платформа для создания, развертывания и управления контейнерами, используемая в проекте для запуска приложения в изолированной среде.
-
-
+- Python - The programming language used for the project.
+- REST - The architectural style for building distributed systems, used in the project to create the API.
+- FastAPI - The Python framework used in the project to implement the REST API.
+- Redis - An in-memory database used in the project for data caching and storing Celery tasks.
+- Celery - A library used in the project for executing background tasks and processing long-running operations.
+- Flower - A web interface used in the project to monitor the status of Celery tasks and track their execution.
+- PostgreSQL - A relational database used in the project for data storage.
+- SQLAlchemy - An Object-Relational Mapping (ORM) used in the project for working with the database.
+- Alembic - A database migration library used in the project to update the database structure when data models change.
+- Docker - A platform used in the project for creating, deploying, and managing containers, allowing the application to run in an isolated environment.
